@@ -6,25 +6,28 @@ namespace Variable_name_generator
     /// </summary>
     public class Screen_rendering
     {
+        //*******************************************************************************
+        // Variables
+
         /// <summary>
         /// Applications name
         /// </summary>
-        private string appName = "";
+        public string appName { get; private set; } = "";
 
         /// <summary>
         /// Screen width in number of characters
         /// </summary>
-        private int screenWidth = 20;
+        public int screenWidth { get; private set; } = 20;
 
         /// <summary>
         /// Character used for rendering borders
         /// </summary>
-        private char borderChar = '*';
+        public char borderChar { get; set; } = '*';
 
         /// <summary>
         /// Space between borders and screen content
         /// </summary>
-        private int borderSpacing = 4;
+        public int borderSpacing { get; private set; } = 4;
 
         /// <summary>
         /// Inicialize renderer with DEFAULT settings and WITHOUT app name
@@ -50,14 +53,17 @@ namespace Variable_name_generator
         /// <param name="_appName">Application name</param>
         public Screen_rendering(int _screenWidth, string _appName)
         {
-            this.appName = _appName;
-            if (_screenWidth > screenWidth)
-                this.screenWidth = _screenWidth;
-            if (_appName.Length >= (this.screenWidth - (2 * borderSpacing)))
-                this.appName = _appName.Remove(this.screenWidth - (2 * this.borderSpacing));
+            appName = _appName;
+            if (screenWidth < _screenWidth)
+                screenWidth = _screenWidth;
+            if (_appName.Length >= (screenWidth - (2 * borderSpacing)))
+                appName = _appName.Remove(screenWidth - (2 * borderSpacing));
             else
-                this.appName = _appName;
+                appName = _appName;
         }
+
+        //*******************************************************************************
+        // Writing lines
 
         /// <summary>
         /// Write full fill border line "***...***"
@@ -84,7 +90,7 @@ namespace Variable_name_generator
                     Console.Write(' ');
 
             }
-            Console.WriteLine("");
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -95,7 +101,6 @@ namespace Variable_name_generator
         {
             string textLine = "";
 
-            
             textLine += borderChar;
 
             for (int i = 1; i < borderSpacing; i++)
@@ -142,7 +147,7 @@ namespace Variable_name_generator
         /// Write line from preformated string
         /// </summary>
         /// <param name="_outputTextLines">Write multiple preformated general output line</param>
-        public void Write_multiple_options_line(string[] _outputTextLines)
+        public void Write_multiple_options_line(List<string> _outputTextLines)
         {
             foreach (var textLine in _outputTextLines)
             {
@@ -151,29 +156,59 @@ namespace Variable_name_generator
         }
 
         /// <summary>
-        /// Write console input line
-        /// </summary>
-        public void Render_question_screen(string[] _outputTextLines)
-        {
-            
-        }
-
-        /// <summary>
         /// Render question window with options and 
         /// </summary>
         public void Write_input_line()
         {
-            Console.Write("Input << ");
+            Console.Write("\nInput << ");
         }
 
+        //*******************************************************************************
+        // Rendering screens
+
+        /// <summary>
+        /// Render top frame with app name
+        /// </summary>
+        public void Render_appname_frame()
+        {
+            Console.Clear();
+            Write_border_line();
+
+            if (appName == "")
+                return;
+            Console.Title = appName;
+
+            Write_empty_line();
+            Write_preformated_line(Format_text_line(appName));
+            Write_empty_line();
+
+            Write_border_line();
+        }
+
+        /// <summary>
+        /// Render screen with multiple lines and feedback choices
+        /// </summary>
+        public void Render_question_screen(List<string> _outputTextLines, string _feedbackOptions)
+        {
+            Render_appname_frame();
+
+            Write_empty_line();
+            Write_multiple_options_line(_outputTextLines);
+            Write_empty_line();
+
+            Write_preformated_line(Format_feedback_line(_feedbackOptions));
+            Write_input_line();
+        }
+
+        // Overrided method with instance string info
         public override string ToString()
         {
-            string outputString = "Renderer : Window width : " + screenWidth + " , app name : ";
+            string outputString = "Renderer : Window width : " + screenWidth + ", app name : ";
 
             if (appName != "")
                 outputString += appName;
             else
-                outputString += "Null";
+                outputString += "null";
 
             return outputString;
         }
